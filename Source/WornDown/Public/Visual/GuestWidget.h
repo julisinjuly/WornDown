@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Styling/SlateBrush.h"
+
 #include "GuestWidget.generated.h"
 
 /**
@@ -19,8 +21,8 @@ public:
 	UDataTable* DialogueTable;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UTexture2D> Image;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI|Visuals", meta = (BindWidget))
+	class UImage* Portrait;
 
 
 
