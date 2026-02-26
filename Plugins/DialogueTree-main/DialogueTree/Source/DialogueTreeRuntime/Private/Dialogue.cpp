@@ -5,6 +5,8 @@
 //UE
 #include "EdGraph/EdGraph.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h" 
+#include "Engine/World.h"
 //Plugin
 #include "DialogueController.h"
 #include "DialogueSpeakerComponent.h"
@@ -55,9 +57,37 @@ void UDialogue::SetSpeaker(FName InName, UDialogueSpeakerComponent* InSpeaker)
 
 UDialogueSpeakerComponent* UDialogue::GetSpeaker(FName InName) const
 {
+
+	if (InName.IsNone())
+	{
+		UE_LOG(LogTemp, Error, TEXT("CRITICAL FAILURE: Dialogue Node has NO speaker assigned! Quitting game to prevent crash."));
+
+		if (const UWorld* World = GetWorld())
+		{
+			UKismetSystemLibrary::QuitGame(World, nullptr, EQuitPreference::Quit, false);
+		}
+		return nullptr;
+	}
+
+	// 2. Does this speaker exist in our list?
 	if (Speakers.Contains(InName))
 	{
-		return Speakers[InName];
+		UDialogueSpeakerComponent* FoundSpeaker = Speakers[InName];
+
+		// 3. Is the speaker valid? (Maybe the Actor was destroyed or is missing)
+		if (IsValid(FoundSpeaker))
+		{
+			return FoundSpeaker;
+		}
+	}
+
+	// --- FAIL STATE: Speaker Name was valid, but they aren't in the conversation ---
+
+	UE_LOG(LogTemp, Error, TEXT("CRITICAL FAILURE: Speaker '%s' is not registered in this dialogue! Quitting game."), *InName.ToString());
+
+	if (const UWorld* World = GetWorld())
+	{
+		UKismetSystemLibrary::QuitGame(World, nullptr, EQuitPreference::Quit, false);
 	}
 
 	return nullptr;
@@ -209,7 +239,12 @@ TMap<FName, UDialogueSpeakerComponent*> UDialogue::GetAllSpeakers() const
 	TMap<FName, UDialogueSpeakerComponent*> AllSpeakers;
 	for (auto& Speaker : Speakers)
 	{
+
+		
 		AllSpeakers.Add(Speaker.Key, Speaker.Value);
+
+
+
 	}
 	return AllSpeakers;
 }
