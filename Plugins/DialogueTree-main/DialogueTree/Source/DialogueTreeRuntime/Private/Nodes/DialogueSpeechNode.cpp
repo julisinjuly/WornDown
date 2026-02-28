@@ -7,6 +7,8 @@
 #include "DialogueSpeakerComponent.h"
 #include "LogDialogueTree.h"
 #include "Transitions/DialogueTransition.h"
+//Engine 
+#include "Kismet/KismetSystemLibrary.h" 
 
 void UDialogueSpeechNode::InitSpeechData(FSpeechDetails& InDetails,
 	TSubclassOf<UDialogueTransition> TransitionType)
@@ -39,6 +41,18 @@ void UDialogueSpeechNode::SelectOption(int32 InOptionIndex)
 
 void UDialogueSpeechNode::EnterNode()
 {
+
+	// SAFETY NET: Check if the Dialogue object was Garbage Collected!
+	if (GetDialogue() == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CRITICAL: The Dialogue object was destroyed while waiting for input! Quitting game to prevent crash."));
+
+		if (const UWorld* World = GetWorld())
+		{
+			UKismetSystemLibrary::QuitGame(World, nullptr, EQuitPreference::Quit, false);
+		}
+		return; // Stop the function instantly
+	}
 	//Play all events
 	PlayEvents();
 

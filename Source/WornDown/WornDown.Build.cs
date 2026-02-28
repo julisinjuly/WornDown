@@ -8,7 +8,7 @@ public class WornDown : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "DialogueTreeRuntime", "DialogueTreeEditor" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "DialogueTreeRuntime" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

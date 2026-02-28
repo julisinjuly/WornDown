@@ -24,6 +24,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI|Visuals", meta = (BindWidget))
 	class UImage* Portrait;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inspection Settings")
+	bool bInspectPanelActive{ false };
 
 
 
