@@ -54,15 +54,31 @@ void UInputDialogueTransition::TransitionOut()
 
 void UInputDialogueTransition::SelectOption(int32 InOptionIndex)
 {
+	
+
+
+
+
+	if (!OwningNode->GetSpeaker())
+	{
+		UE_LOG(LogDialogueTree, Warning, TEXT("Blocked input: Speaker is invalid or dialogue already ended."));
+		return;
+	}
+
+
+
 	//End the dialogue if fed a bad index
 	if (!Options.IsValidIndex(InOptionIndex))
 	{
 		UE_LOG(
 			LogDialogueTree,
 			Warning,
-			TEXT("Attempted to transition to invalid option index.")
+			TEXT("Attempted to transition to invalid option index: %d."),
+			InOptionIndex
 		);
+		
 		return;
+		
 	}
 
 	//If option locked, do nothing more
@@ -70,9 +86,9 @@ void UInputDialogueTransition::SelectOption(int32 InOptionIndex)
 	{
 		return;
 	}
+	UDialogueSpeakerComponent* Speaker = OwningNode->GetSpeaker();
 
 	//Stop playing audio 
-	UDialogueSpeakerComponent* Speaker = OwningNode->GetSpeaker();
 	if (Speaker)
 	{
 		Speaker->Stop();
@@ -81,6 +97,15 @@ void UInputDialogueTransition::SelectOption(int32 InOptionIndex)
 	//Transition to the selected node 
 	UDialogueNode* Selected = Options[InOptionIndex].TargetNode;
 	OwningNode->GetDialogue()->TraverseNode(Selected);
+
+	UE_LOG(
+		LogDialogueTree,
+		Warning,
+		TEXT("Targeted node: %s"),
+		*Options[InOptionIndex].TargetNode.GetName()
+		);
+
+
 }
 
 FText UInputDialogueTransition::GetDisplayName() const

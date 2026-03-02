@@ -23,7 +23,6 @@ ADialogueController::ADialogueController()
 
 void ADialogueController::SelectOption(int32 InOptionIndex) const
 {
-
 	if (CurrentDialogue)
 	{
 		CurrentDialogue->SelectOption(InOptionIndex);
