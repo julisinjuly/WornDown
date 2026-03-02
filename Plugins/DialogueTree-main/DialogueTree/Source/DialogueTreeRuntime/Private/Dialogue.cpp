@@ -233,7 +233,7 @@ EDialogueCompileStatus UDialogue::GetCompileStatus() const
 	return CompileStatus;
 }
 
-TMap<FName, UDialogueSpeakerComponent*> UDialogue::GetAllSpeakers() const
+TMap<FName, UDialogueSpeakerComponent*> UDialogue::a() const
 {
 	//Have to manually copy to handle conversion from TObjectPtr
 	TMap<FName, UDialogueSpeakerComponent*> AllSpeakers;
