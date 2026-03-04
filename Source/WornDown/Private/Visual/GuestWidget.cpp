@@ -3,3 +3,9 @@
 
 #include "Visual/GuestWidget.h"
 
+void UGuestWidget::TriggerHighlight()
+{
+
+	OnHighlightTriggered.Broadcast();
+
+}

@@ -8,6 +8,10 @@
 
 #include "GuestWidget.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHighlightTriggered);
+
+
 /**
  * 
  */
@@ -17,8 +21,23 @@ class WORNDOWN_API UGuestWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnHighlightTriggered OnHighlightTriggered;
+
+	UFUNCTION(BlueprintCallable, Category = "Events")
+	void TriggerHighlight();
+
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
 	UDataTable* DialogueTable;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue")
+	UDataTable* DetailsTable;
+
+
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI|Visuals", meta = (BindWidget))
