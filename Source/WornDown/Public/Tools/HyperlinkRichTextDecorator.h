@@ -9,13 +9,16 @@
 /**
  * 
  */
-UCLASS()
+
+
+UCLASS(Blueprintable, BlueprintType)
 class WORNDOWN_API UHyperlinkRichTextDecorator : public URichTextBlockDecorator
 {
 	GENERATED_BODY()
 
 public:
-	// This function is the "Engine" that creates the widget inside the text
+
+
 	virtual TSharedPtr<ITextDecorator> CreateDecorator(URichTextBlock* InOwner) override;
 	
 };
