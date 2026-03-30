@@ -18,7 +18,10 @@ class WORNDOWN_API UHyperlinkRichTextDecorator : public URichTextBlockDecorator
 
 public:
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Appearance")
+	FLinearColor ClickableTextColor = FLinearColor::Red;
 
 	virtual TSharedPtr<ITextDecorator> CreateDecorator(URichTextBlock* InOwner) override;
-	
+
+
 };

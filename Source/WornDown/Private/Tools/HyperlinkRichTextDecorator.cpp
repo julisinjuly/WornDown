@@ -8,10 +8,9 @@
 class FHyperlinkRichTextDecorator : public FRichTextDecorator
 {
 public:
-    FHyperlinkRichTextDecorator(URichTextBlock* InOwner)
-        : FRichTextDecorator(InOwner)
+    FHyperlinkRichTextDecorator(URichTextBlock* InOwner, UHyperlinkRichTextDecorator* InDecorator)
+        : FRichTextDecorator(InOwner), DecoratorUObject(InDecorator) // Store it safely
     {
-        // 1. Safely find the UserWidget (Main Scene) that owns this Rich Text Block
         if (InOwner)
         {
             OwnerWidget = InOwner->GetTypedOuter<UUserWidget>();
@@ -20,59 +19,50 @@ public:
 
     virtual bool Supports(const FTextRunParseResults& RunParseResult, const FString& Text) const override
     {
-        // 2. Looks for <action id="something">
         return RunParseResult.Name == TEXT("link");
     }
 
 protected:
     virtual TSharedPtr<SWidget> CreateDecoratorWidget(const FTextRunInfo& RunInfo, const FTextBlockStyle& DefaultTextStyle) const override
     {
-        // 3. Extract the ID from the text tag
         FString ActionID = RunInfo.MetaData.Contains(TEXT("id")) ? *RunInfo.MetaData.Find(TEXT("id")) : TEXT("");
 
-        // 4. Create the invisible Slate Button
         return SNew(SButton)
             .ContentPadding(0)
-            .ButtonStyle(FAppStyle::Get(), "NoBorder") // Makes it look like standard text, not a chunky button
+            .ButtonStyle(FAppStyle::Get(), "NoBorder")
             .OnClicked_Lambda([this, ActionID]()
                 {
-                    // LOG 1: Did the Slate Button actually receive the click?
-                    UE_LOG(LogTemp, Warning, TEXT(">>> Slate Button Clicked! ID: %s"), *ActionID);
-
-                    // LOG 2: Did we lose the pointer to the Main Scene Widget?
-                    if (!OwnerWidget.IsValid())
+                    if (OwnerWidget.IsValid() && OwnerWidget->Implements<UInteractiveTextInterface>())
                     {
-                        UE_LOG(LogTemp, Error, TEXT(">>> FAILURE: OwnerWidget is INVALID! The pointer was lost."));
-                        return FReply::Handled();
+                        IInteractiveTextInterface::Execute_OnInteractiveWordClicked(OwnerWidget.Get(), ActionID);
                     }
-
-                    // LOG 3: Does the C++ recognize the Blueprint Interface?
-                    if (!OwnerWidget->Implements<UInteractiveTextInterface>())
-                    {
-                        UE_LOG(LogTemp, Error, TEXT(">>> FAILURE: OwnerWidget does NOT implement the interface!"));
-                        return FReply::Handled();
-                    }
-
-                    UE_LOG(LogTemp, Warning, TEXT(">>> SUCCESS: Executing Interface call to Blueprint..."));
-                    IInteractiveTextInterface::Execute_OnInteractiveWordClicked(OwnerWidget.Get(), ActionID);
-
                     return FReply::Handled();
                 })
             [
-                // The actual text displayed inside the button
-                SNew(STextBlock)
-                    .Text(RunInfo.Content)
-                    .Font(DefaultTextStyle.Font)
-                    .ColorAndOpacity(DefaultTextStyle.ColorAndOpacity)
+                
+               SNew(STextBlock)
+                   .Text(RunInfo.Content)
+                   .Font(DefaultTextStyle.Font)
+                   // 2. THE FIX: Actively fetch the live color from the Blueprint!
+                   .ColorAndOpacity_Lambda([this, DefaultTextStyle]() -> FSlateColor
+                       {
+                           if (DecoratorUObject.IsValid())
+                           {
+                               return FSlateColor(DecoratorUObject->ClickableTextColor);
+                           }
+                           return DefaultTextStyle.ColorAndOpacity; // Safe fallback
+                       })
+               
             ];
     }
 
 private:
-    // A safe pointer to your Main Scene widget
     TWeakObjectPtr<UUserWidget> OwnerWidget;
+    TWeakObjectPtr<UHyperlinkRichTextDecorator> DecoratorUObject;
 };
 
 TSharedPtr<ITextDecorator> UHyperlinkRichTextDecorator::CreateDecorator(URichTextBlock* InOwner)
 {
-    return MakeShareable(new FHyperlinkRichTextDecorator(InOwner));
+    // 3. Pass 'this' so the Slate widget can constantly read your live Blueprint variables
+    return MakeShareable(new FHyperlinkRichTextDecorator(InOwner, this));
 }
