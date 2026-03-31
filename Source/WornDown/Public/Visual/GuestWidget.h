@@ -38,6 +38,16 @@ public:
 	UDataTable* DetailsTable;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuestParams")
+	int32 TrustLevel = 3; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuestParams")
+	bool bAcceptCocktail = true; 
+
+	UFUNCTION(BlueprintCallable, Category = "Trust System")
+	void EvaluateCocktail(bool bIsCocktailGood);
+
+
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI|Visuals", meta = (BindWidget))
