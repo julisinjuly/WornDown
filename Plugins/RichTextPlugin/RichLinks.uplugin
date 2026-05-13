@@ -1,0 +1,26 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"EngineVersion": "5.3.0",
+	"FriendlyName": "RichLinks",
+	"Description": "Adds <link> tags to RichTextBlock widgets that support mouse events.",
+	"Category": "Other",
+	"CreatedBy": "Kai Jurgeit",
+	"CreatedByURL": "https://kaijurgeit.github.io/",
+	"DocsURL": "https://kaijurgeit.github.io/UE5RichLinksPlugin/",	
+	"MarketplaceURL": "com.epicgames.launcher://ue/Fab/product/37a45a3b-e4f0-463c-95a6-0d95074210de",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "RichLinks",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"PlatformAllowList": [ "Win64" ]
+		}
+	]
+}
