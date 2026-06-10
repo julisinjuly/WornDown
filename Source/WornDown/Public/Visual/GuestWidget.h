@@ -38,6 +38,10 @@ public:
 	UDataTable* DetailsTable;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TObjectPtr<UGuestWidget> AuraWidget{ nullptr};
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuestParams")
 	int32 TrustLevel = 3; 
 
